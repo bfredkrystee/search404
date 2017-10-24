@@ -196,7 +196,8 @@ class Search404Controller extends ControllerBase {
       );
       $build['#attached']['library'][] = 'search/drupal.search.results';
     }
-    if (\Drupal::config('search404.settings')->get('search404_do_custom_search')) {
+    if (\Drupal::config('search404.settings')->get('search404_do_custom_search') &&
+    !\Drupal::config('search404.settings')->get('search404_skip_auto_search')) {
       $custom_search_path = \Drupal::config('search404.settings')->get('search404_custom_search_path');
 
       // Remove query parameters before checking whether the search path
