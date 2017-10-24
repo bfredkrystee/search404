@@ -150,7 +150,7 @@ class Search404Settings extends ConfigFormBase {
     $form['advanced']['search404_page_title'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Custom page title'),
-      '#description' => $this->t('You can enter a value that will displayed at the title of the webpage e.g. "Page not found".'),
+      '#description' => $this->t('You can enter a value that will be displayed at the title of the webpage e.g. "Page not found".'),
       '#default_value' => \Drupal::config('search404.settings')->get('search404_page_title'),
     );
     // Show custom text below the search form for the 404 search
@@ -167,7 +167,7 @@ class Search404Settings extends ConfigFormBase {
       '#title' => $this->t('Add a redirection url for empty search results.'),
       '#type' => 'textfield',
       '#placeholder' => 'For example, /node, /node/10, etc.',
-      '#descriptionc' => $this->t('You can enter a valid url with a leading "/" to display instead of empty result.'),
+      '#description' => $this->t('You can enter a valid url with a leading "/" to display instead of an empty result.'),
       '#default_value' => \Drupal::config('search404.settings')->get('search404_page_redirect'),
     );
 
@@ -197,10 +197,10 @@ class Search404Settings extends ConfigFormBase {
     if (!empty($form_state->getValue('search404_page_redirect'))) {
       $path = $form_state->getValue('search404_page_redirect');
       if (strpos($path, ' ') === 0) {
-        $form_state->setErrorByName('search404_page_redirect', t('Invalid url : Redirect url should not be a space or not start with a space.'));
+        $form_state->setErrorByName('search404_page_redirect', t('Invalid url : Redirect url should not be a space or start with a space.'));
       }
       if (strpos($path, '/') !== 0) {
-        $form_state->setErrorByName('search404_page_redirect', t('Invalid url : Redirect url should be start with a slash.'));
+        $form_state->setErrorByName('search404_page_redirect', t('Invalid url : Redirect url should start with a slash.'));
       }
     }
     // Validation for custom search path.
@@ -209,10 +209,10 @@ class Search404Settings extends ConfigFormBase {
       $custom_path = $form_state->getValue('search404_custom_search_path');
 
       if (empty(preg_match("/\/@keys$/", $custom_path))) {
-        $form_state->setErrorByName('search404_custom_search_path', t('Custom search path should be ends with search key pattern "/@keys".'));
+        $form_state->setErrorByName('search404_custom_search_path', t('Custom search path should end with search key pattern "/@keys".'));
       }
       if (strpos($custom_path, '/') === 0) {
-        $form_state->setErrorByName('search404_page_redirect', t('Custom search path should not be start with a slash.'));
+        $form_state->setErrorByName('search404_page_redirect', t('Custom search path should not start with a slash.'));
       }
     }
   }
