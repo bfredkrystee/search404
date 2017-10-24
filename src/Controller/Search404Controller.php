@@ -142,7 +142,7 @@ class Search404Controller extends ControllerBase {
               $this->search404CustomErrorMessage($keys);
               // Redirecting the page for empty search404 result,
               // if redirect url is configured.
-              if (\Drupal::config('search404.settings')->get('search404_page_redirect')) {
+              if (!count($results) && \Drupal::config('search404.settings')->get('search404_page_redirect')) {
                 $redirect_path = \Drupal::config('search404.settings')->get('search404_page_redirect');
                 return $this->search404Goto($redirect_path);
               }
