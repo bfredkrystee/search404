@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\search\Entity\SearchPage;
 use Drupal\Component\Utility\Html;
+use Drupal\search\Form\SearchPageForm;
 
 /**
  * Route controller for search.
@@ -154,7 +155,7 @@ class Search404Controller extends ControllerBase {
       }
 
       // Construct the search form.
-      $build['search_form'] = $this->entityFormBuilder()->getForm($entity, 'search');
+      $build['search_form'] = $this->formBuilder()->getForm(SearchPageForm::class, $entity);
 
       // Set the custom page text on the top of the results.
       $search_404_page_text = \Drupal::config('search404.settings')->get('search404_page_text');
