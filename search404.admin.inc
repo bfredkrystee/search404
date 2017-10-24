@@ -151,7 +151,7 @@ function search404_settings() {
   $form['advanced']['search404_page_title'] = array(
     '#type' => 'textfield',
     '#title' => t('Custom page title'),
-    '#description' => t('You can enter a value that will displayed at the title of the webpage e.g. "Page not found".'),
+    '#description' => t('You can enter a value that will be displayed at the title of the webpage e.g. "Page not found".'),
     '#default_value' => variable_get('search404_page_title', t('Page not found')),
   );
   // Show custom text below the search form for the 404 search results page.
