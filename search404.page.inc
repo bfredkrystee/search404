@@ -146,6 +146,11 @@ function search404_page() {
   drupal_set_title(variable_get('search404_page_title', t('Page not found')));
   $keys = search404_get_keys();
 
+  // If there's nothing to search for, return.
+  if (!$keys) {
+    return;
+  }
+
   // If the current path is set as one of the ignore path, then do not get into
   // the complex search functions.
   $paths_to_ignore = variable_get('search404_ignore_paths', '');
