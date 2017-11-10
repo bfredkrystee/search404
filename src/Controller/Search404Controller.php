@@ -315,8 +315,11 @@ class Search404Controller extends ControllerBase {
       foreach ($keys as $key => $value) {
         $keys_with_space_hypen[$key] = explode(' ', $value);
         $keys_with_space_hypen[$key] = array_filter($keys_with_space_hypen[$key]);
+
       }
-      $keys = call_user_func_array('array_merge', $keys_with_space_hypen);
+      if (!empty($keys)) {
+        $keys = call_user_func_array('array_merge', $keys_with_space_hypen);
+      }
     }
 
     // Abort query on certain extensions, e.g: gif jpg jpeg png.
