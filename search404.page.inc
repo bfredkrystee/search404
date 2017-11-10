@@ -101,6 +101,9 @@ function search404_search_engine_query() {
  *   This param indicates wheather the search is jumped to a particlar search.
  */
 function search404_error_message($keys, $jump_to_result = FALSE) {
+  if (variable_get('search404_disable_error_message', FALSE)) {
+    return;
+  }
   if ($jump_to_result) {
     $default_message = t('The page you requested does not exist.
     For your  convenience, a search was performed using the query @keys. Not quite what you were looking for? !other_results.',
@@ -333,21 +336,17 @@ function search404_results($keys, $type_search) {
         || (count($results['#results']) >= 1 && variable_get('search404_first', FALSE))
       )
     ) {
-      if (!variable_get('search404_disable_error_message', FALSE)) {
-        search404_error_message($keys);
-      }
       if (isset($results['#results'][0]['node']->path)) {
         $result_path = $results['#results'][0]['node']->path;
       }
       else {
         $result_path = 'node/' . $results['#results'][0]['node']->nid;
       }
+      search404_error_message($keys);
       search404_goto($result_path);
     }
     else {
-      if (!variable_get('search404_disable_error_message', FALSE)) {
-        search404_error_message($keys);
-      }
+      search404_error_message($keys);
       if (isset($results['#results']) && count($results['#results']) >= 1) {
         drupal_add_css(drupal_get_path('module', 'search') . '/search.css', 'module', 'all', FALSE);
       }
