@@ -34,7 +34,7 @@ function search404_variable_info($options) {
     'type' => 'string',
     'title' => t('Custom path', array(), $options),
     'default' => '',
-    'description' => t('path you can enter which will be redirected to the custom search page.', array(), $options),
+    'description' => t('You can provide a path which will used to redirect to the custom search page.', array(), $options),
     'required' => FALSE,
     'group' => 'search404',
     'localize' => TRUE,
