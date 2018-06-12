@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\search404\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
@@ -72,7 +73,7 @@ class Search404Controller extends ControllerBase {
       }
       $keywords = strtolower($keywords);
 
-      $ignore_paths = array();
+      $ignore_paths = [];
       foreach ($path_array as $key => $path) {
         $path = preg_replace('[ |-|_]', '/', $path);
         $path = strtolower($path);
@@ -96,8 +97,8 @@ class Search404Controller extends ControllerBase {
 
       $entity = SearchPage::load($default_search_page);
       $plugin = $entity->getPlugin();
-      $build = array();
-      $results = array();
+      $build = [];
+      $results = [];
 
       // Build the form first, because it may redirect during the submit,
       // and we don't want to build the results based on last time's request.
@@ -116,7 +117,7 @@ class Search404Controller extends ControllerBase {
           if ($plugin->isSearchExecutable()) {
             // Log the search.
             if ($this->config('search.settings')->get('logging')) {
-              $this->logger->notice('Searched %type for %keys.', array('%keys' => $keys, '%type' => $entity->label()));
+              $this->logger->notice('Searched %type for %keys.', ['%keys' => $keys, '%type' => $entity->label()]);
             }
             // Collect the search results.
             $results = $plugin->buildResults();
@@ -173,27 +174,27 @@ class Search404Controller extends ControllerBase {
         <li>Consider loosening your query with <em>OR</em>. <em>bike OR shed</em> will often show more results than <em>bike shed</em>.</li>
         </ul>');
       }
-      $build['search_results'] = array(
-        '#theme' => array('item_list__search_results__' . $plugin->getPluginId(), 'item_list__search_results'),
+      $build['search_results'] = [
+        '#theme' => ['item_list__search_results__' . $plugin->getPluginId(), 'item_list__search_results'],
         '#items' => $results,
-        '#empty' => array(
+        '#empty' => [
           '#markup' => '<h3>' . $this->t('Your search yielded no results.') . '</h3>' . $no_results,
-        ),
+        ],
         '#list_type' => 'ol',
-        '#attributes' => array(
-          'class' => array(
+        '#attributes' => [
+          'class' => [
             'search-results',
             $plugin->getPluginId() . '-results',
-          ),
-        ),
-        '#cache' => array(
+          ],
+        ],
+        '#cache' => [
           'tags' => $entity->getCacheTags(),
-        ),
-      );
+        ],
+      ];
 
-      $build['pager_pager'] = array(
+      $build['pager_pager'] = [
         '#type' => 'pager',
-      );
+      ];
       $build['#attached']['library'][] = 'search/drupal.search.results';
     }
     if (\Drupal::config('search404.settings')->get('search404_do_custom_search') &&
@@ -230,7 +231,7 @@ class Search404Controller extends ControllerBase {
     }
 
     if (empty($build)) {
-      $build = array('#markup' => 'The page you requested does not exist.');
+      $build = ['#markup' => 'The page you requested does not exist.'];
     }
     return $build;
   }
@@ -254,14 +255,14 @@ class Search404Controller extends ControllerBase {
    * Detect search from search engine.
    */
   public function search404SearchEngineQuery() {
-    $engines = array(
+    $engines = [
       'altavista' => 'q',
       'aol' => 'query',
       'google' => 'q',
       'bing' => 'q',
       'lycos' => 'query',
       'yahoo' => 'p',
-    );
+    ];
     $parsed_url = parse_url($_SERVER['HTTP_REFERER']);
     $remote_host = !empty($parsed_url['host']) ? $parsed_url['host'] : '';
     $query_string = !empty($parsed_url['query']) ? $parsed_url['query'] : '';
@@ -285,7 +286,7 @@ class Search404Controller extends ControllerBase {
    * that resulted in the 404.
    */
   public function search404GetKeys() {
-    $keys = array();
+    $keys = [];
     // Try to get keywords from the search result (if it was one)
     // that resulted in the 404 if the config is set.
     if (\Drupal::config('search404.settings')->get('search404_use_search_engine')) {
@@ -303,7 +304,7 @@ class Search404Controller extends ControllerBase {
       if (\Drupal::config('search404.settings')->get('search404_do_custom_search')) {
         $custom_search_path = \Drupal::config('search404.settings')->get('search404_custom_search_path');
         $custom_search = explode('/', $custom_search_path);
-        $search_path = array_diff($custom_search, array("@keys"));
+        $search_path = array_diff($custom_search, ["@keys"]);
         $keywords = array_diff($paths, $search_path);
         $keys = array_filter($keywords);
       }
@@ -372,7 +373,7 @@ class Search404Controller extends ControllerBase {
       if (\Drupal::config('search404.settings')->get('search404_do_custom_search')) {
         $custom_search_path = \Drupal::config('search404.settings')->get('search404_custom_search_path');
         $custom_search = explode('/', $custom_search_path);
-        $custom_path = array_diff($custom_search, array("@keys"));
+        $custom_path = array_diff($custom_search, ["@keys"]);
         $keys = str_replace($custom_path[0], '', $keys);
         $keys = trim(rtrim($keys, ' OR '));
       }
@@ -383,7 +384,7 @@ class Search404Controller extends ControllerBase {
       if (\Drupal::config('search404.settings')->get('search404_do_custom_search')) {
         $custom_search_path = \Drupal::config('search404.settings')->get('search404_custom_search_path');
         $custom_search = explode('/', $custom_search_path);
-        $custom_path = array_diff($custom_search, array("@keys"));
+        $custom_path = array_diff($custom_search, ["@keys"]);
         $keys = trim(str_replace($custom_path[0], '', $keys));
       }
     }
@@ -400,7 +401,7 @@ class Search404Controller extends ControllerBase {
    * @param string $keys
    *   Searching keywords.
    *
-   * @return array $search
+   * @return array
    *   Custom redirection path and key for comparison.
    */
   public function search404CustomRedirection($search_type, $path, $keys) {
@@ -439,7 +440,7 @@ class Search404Controller extends ControllerBase {
         $show_error_message = $this->t('The page you requested does not exist. Invalid keywords used.');
       }
       else {
-        $show_error_message = $this->t('The page you requested does not exist. For your convenience, a search was performed using the query %keys.', array('%keys' => Html::escape($keys)));
+        $show_error_message = $this->t('The page you requested does not exist. For your convenience, a search was performed using the query %keys.', ['%keys' => Html::escape($keys)]);
       }
     }
     else {
