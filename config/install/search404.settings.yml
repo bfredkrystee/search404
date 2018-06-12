@@ -9,6 +9,7 @@ search404_use_search_engine: false
 search404_ignore_extensions: 'htm html php'
 search404_ignore_query: 'gif jpg jpeg bmp png'
 search404_first: false
+search404_first_on_paths: ''
 search404_regex: ''
 search404_page_text: ''
 search404_do_google_cse: false

@@ -128,9 +128,18 @@ class Search404Controller extends ControllerBase {
             // if there is only one result and if jump to first is selected or
             // if there are more than one results and force jump
             // to first is selected.
+            $patterns = \Drupal::config('search404.settings')->get('search404_first_on_paths');
+            $path_matches = TRUE;
+
+            // Check if the current path exists in the set paths list.
+            if (!empty($patterns)) {
+              $path = str_replace(' ', '/', $keys);
+              $path_matches = \Drupal::service('path.matcher')->matchPath($path, $patterns);
+            }
             if (is_array($results) &&
                 (
-                (count($results) == 1 && \Drupal::config('search404.settings')->get('search404_jump')) || (count($results) >= 1 && \Drupal::config('search404.settings')->get('search404_first'))
+                (count($results) == 1 && \Drupal::config('search404.settings')->get('search404_jump'))
+                || (count($results) >= 1 && \Drupal::config('search404.settings')->get('search404_first') && $path_matches)
                 )
             ) {
               $this->search404CustomErrorMessage($keys);

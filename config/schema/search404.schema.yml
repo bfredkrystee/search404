@@ -24,6 +24,8 @@ search404.settings:
       type: string
     search404_first:
       type: boolean
+    search404_first_on_paths:
+      type: string
     search404_regex:
       type: string
     search404_page_text:

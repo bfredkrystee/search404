@@ -40,6 +40,12 @@ class Search404Settings extends ConfigFormBase {
       '#description' => $this->t('Works only with Core, Apache Solr, Lucene and Xapian searches. An HTTP status of 301 or 302 will be returned for this redirect.'),
       '#default_value' => \Drupal::config('search404.settings')->get('search404_first'),
     ];
+    $form['search404_first_on_paths'] = [
+      '#type' => 'textarea',
+      '#title' => t('Jump directly to the first search result only on the listed paths.'),
+      '#description' => t('Enter one path per line. The "*" character is a wildcard. Example paths are blog for the blog page and blog/* for every personal blog.'),
+      '#default_value' => \Drupal::config('search404.settings')->get('search404_first_on_paths'),
+    ];
     $form['search404_do_google_cse'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Do a Google CSE Search instead of a Drupal Search when a 404 occurs'),
@@ -232,6 +238,7 @@ class Search404Settings extends ConfigFormBase {
       ->set('search404_do_google_cse', $form_state->getValue('search404_do_google_cse'))
       ->set('search404_do_search_by_page', $form_state->getValue('search404_do_search_by_page'))
       ->set('search404_first', $form_state->getValue('search404_first'))
+      ->set('search404_first_on_paths', $form_state->getValue('search404_first_on_paths'))
       ->set('search404_jump', $form_state->getValue('search404_jump'))
       ->set('search404_use_or', $form_state->getValue('search404_use_or'))
       ->set('search404_ignore', $form_state->getValue('search404_ignore'))
