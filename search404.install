@@ -17,7 +17,7 @@ function search404_install() {
  */
 function search404_uninstall() {
   $site_404 = \Drupal::config('system.site')->get('page.404');
-  if ($site_404 == 'search404') {
+  if ($site_404 == '/search404') {
     \Drupal::configFactory()->getEditable('system.site')->clear('page.404')->save();
   }
 }
