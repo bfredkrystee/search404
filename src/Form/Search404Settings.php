@@ -65,6 +65,12 @@ class Search404Settings extends ConfigFormBase {
       '#title' => $this->t('Custom search path'),
       '#description' => $this->t('The custom search path: example: myownsearch/@keys. The token "@keys" will be replaced with the search keys from the URL.'),
       '#default_value' => \Drupal::config('search404.settings')->get('search404_custom_search_path'),
+      '#required' => ((!empty($form_state->getValue("search404_do_custom_search")) &&$form_state->getValue("search404_do_custom_search") == TRUE) ? TRUE : FALSE),
+      '#states' => array(
+        "visible" => array(
+          "input[name='search404_do_custom_search']" => array("checked" => TRUE),
+        ),
+      ),
     );
     // Added for having a 301 redirect instead of the standard 302
     // (offered by the drupal_goto) than Core, Apache Solr,
@@ -197,22 +203,21 @@ class Search404Settings extends ConfigFormBase {
     if (!empty($form_state->getValue('search404_page_redirect'))) {
       $path = $form_state->getValue('search404_page_redirect');
       if (strpos($path, ' ') === 0) {
-        $form_state->setErrorByName('search404_page_redirect', t('Invalid url : Redirect url should not be a space or start with a space.'));
+        $form_state->setErrorByName('search404_page_redirect', $this->t('Invalid url : Redirect url should not be a space or not start with a space.'));
       }
       if (strpos($path, '/') !== 0) {
-        $form_state->setErrorByName('search404_page_redirect', t('Invalid url : Redirect url should start with a slash.'));
+        $form_state->setErrorByName('search404_page_redirect', $this->t('Invalid url : Redirect url should be start with a slash.'));
       }
     }
     // Validation for custom search path.
-    if (!empty($form_state->getValue('search404_do_custom_search')) &&
-    !empty($form_state->getValue('search404_custom_search_path'))) {
+    if (!empty($form_state->getValue('search404_do_custom_search'))) {
       $custom_path = $form_state->getValue('search404_custom_search_path');
 
       if (empty(preg_match("/\/@keys$/", $custom_path))) {
-        $form_state->setErrorByName('search404_custom_search_path', t('Custom search path should end with search key pattern "/@keys".'));
+        $form_state->setErrorByName('search404_custom_search_path', $this->t('Custom search path should be ends with search key pattern "/@keys".'));
       }
       if (strpos($custom_path, '/') === 0) {
-        $form_state->setErrorByName('search404_page_redirect', t('Custom search path should not start with a slash.'));
+        $form_state->setErrorByName('search404_custom_search_path', $this->t('Custom search path should not be start with a slash.'));
       }
     }
   }
@@ -221,8 +226,8 @@ class Search404Settings extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->configFactory()->getEditable('search404.settings')
-      ->set('search404_redirect_301', $form_state->getValue('search404_redirect_301'))
+    $settings = $this->configFactory()->getEditable('search404.settings');
+    $settings->set('search404_redirect_301', $form_state->getValue('search404_redirect_301'))
       ->set('search404_do_google_cse', $form_state->getValue('search404_do_google_cse'))
       ->set('search404_do_search_by_page', $form_state->getValue('search404_do_search_by_page'))
       ->set('search404_first', $form_state->getValue('search404_first'))
@@ -238,11 +243,20 @@ class Search404Settings extends ConfigFormBase {
       ->set('search404_skip_auto_search', $form_state->getValue('search404_skip_auto_search'))
       ->set('search404_use_search_engine', $form_state->getValue('search404_use_search_engine'))
       ->set('search404_disable_error_message', $form_state->getValue('search404_disable_error_message'))
-      ->set('search404_do_custom_search', $form_state->getValue('search404_do_custom_search'))
-      ->set('search404_custom_search_path', $form_state->getValue('search404_custom_search_path'))
       ->set('search404_custom_error_message', $form_state->getValue('search404_custom_error_message'))
-      ->set('search404_page_redirect', $form_state->getValue('search404_page_redirect'))
-      ->save();
+      ->set('search404_page_redirect', $form_state->getValue('search404_page_redirect'));
+
+    // Save custom path if the corresponding checkbox is checked.
+    if (!empty($form_state->getValue('search404_do_custom_search'))) {
+      $settings->set('search404_custom_search_path', $form_state->getValue('search404_custom_search_path'));
+      $settings->set('search404_do_custom_search', $form_state->getValue('search404_do_custom_search'));
+    }
+    else {
+      $settings->set('search404_custom_search_path', '');
+      $settings->set('search404_do_custom_search', 0);
+    }
+    // Save all configurations.
+    $settings->save();
     parent::submitForm($form, $form_state);
   }
 
