@@ -223,6 +223,10 @@ class Search404Settings extends ConfigFormBase {
       if (empty(preg_match("/\/@keys$/", $custom_path))) {
         $form_state->setErrorByName('search404_custom_search_path', $this->t('Custom search path should be ends with search key pattern "/@keys".'));
       }
+      $url_path = explode("@keys", $custom_path);
+      if (!empty(preg_match('/[\'^£!`$%&*()\{}\:.;,\[\]"@#~?><>,|=_+¬-]/', $url_path[0]))) {
+        $form_state->setErrorByName('search404_custom_search_path', t('Custom search path should not contains special characters other than "/"'));
+      }
       if (strpos($custom_path, '/') === 0) {
         $form_state->setErrorByName('search404_custom_search_path', $this->t('Custom search path should not be start with a slash.'));
       }
