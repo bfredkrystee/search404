@@ -272,7 +272,7 @@ class Search404Controller extends ControllerBase {
       'lycos' => 'query',
       'yahoo' => 'p',
     ];
-    $parsed_url = parse_url($_SERVER['HTTP_REFERER']);
+    $parsed_url = !empty($_SERVER['HTTP_REFERER']) ? parse_url($_SERVER['HTTP_REFERER']) : FALSE;
     $remote_host = !empty($parsed_url['host']) ? $parsed_url['host'] : '';
     $query_string = !empty($parsed_url['query']) ? $parsed_url['query'] : '';
     parse_str($query_string, $query);
