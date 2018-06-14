@@ -2,6 +2,6 @@ name = "Search 404"
 description = "Automatically search for the keywords in URLs that result in 404 errors and show results instead of Page-Not-Found. "
 core = 7.x
 
+dependencies[] = search
 files[] = search404.test
-
 configure = admin/config/search/search404
