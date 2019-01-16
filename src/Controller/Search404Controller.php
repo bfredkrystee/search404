@@ -216,6 +216,20 @@ class Search404Controller extends ControllerBase {
       $current_path = \Drupal::service('path.current')->getPath();
       $current_path = preg_replace('/[!@#$^&*();\'"+_,]/', '', $current_path);
 
+        if (\Drupal::config('search404.settings')->get('search404_base_name')) {
+            $temp_paths = explode('/', $current_path);
+            if (!@end($temp_paths)) {
+                unset($temp_paths[key($temp_paths)]);
+            }
+            $temp_paths = array(@end($temp_paths));
+            $current_path = preg_replace('/[!@#$^&*();\'"+_,]/', '', $temp_paths[0]);
+            $current_path = '/' . $current_path;
+        }
+        else {
+            $current_path = preg_replace('/[!@#$^&*();\'"+_,]/', '', $current_path);
+        }
+
+
       // All search keywords with space
       // and slash are replacing with hyphen in url redirect.
       $search_keys = '';
@@ -235,7 +249,12 @@ class Search404Controller extends ControllerBase {
         if ($search_keys != '') {
           $custom_search_path = str_replace('@keys', $search_keys, $custom_search_path);
         }
-        return $this->search404Goto("/" . $custom_search_path);
+          if(\Drupal::config('search404.settings')->get('search404_add_oldurl_querystring')) {
+              return $this->search404Goto("/" . $custom_search_path . '&redirect_source='. \Drupal::service('path.current')->getPath());
+          }
+          else {
+              return $this->search404Goto("/" . $custom_search_path);
+          }
       }
     }
 
@@ -311,6 +330,23 @@ class Search404Controller extends ControllerBase {
       $paths = explode('/', $path);
       // Removing the custom search path value from the keyword search.
       if (\Drupal::config('search404.settings')->get('search404_do_custom_search')) {
+          if (\Drupal::config('search404.settings')->get('search404_base_name')) {
+          $temp_paths = explode('/', $path);
+          if (!@end($temp_paths)) {
+              unset($temp_paths[key($temp_paths)]);
+          }
+          $temp_paths = array(@end($temp_paths));
+          $new_path = preg_replace('/[_+-.,!@#$^&*();\'"?=]|[|]|[{}]|[<>]/', '/', $temp_paths[0]);
+          $paths = explode('/', $new_path);
+          array_unshift($paths, "");
+      }
+      else {
+              $path = preg_replace('/[_+-.,!@#$^&*();\'"?=]|[|]|[{}]|[<>]/', '/', $path);
+              $paths = explode('/', $path);
+          }
+
+
+
         $custom_search_path = \Drupal::config('search404.settings')->get('search404_custom_search_path');
         $custom_search = explode('/', $custom_search_path);
         $search_path = array_diff($custom_search, ["@keys"]);
