@@ -5,6 +5,3 @@ type: module
 package: Search
 
 configure: search404.settings
-
-dependencies:
-  - search
